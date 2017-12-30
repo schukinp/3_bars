@@ -51,8 +51,8 @@ def get_closest_bar():
     latitude = float(input('Широта: '))
     coords = get_bar_name_and_coordinates()
     def distance(key):
-        value = (longitude - coords[key][0] + latitude - coords[key][1]) ** 2
-        return value
+        dist = (longitude - coords[key][0] + latitude - coords[key][1]) ** 2
+        return dist
     found = min(coords, key=distance)
     print('Ближайший бар: ' + found)
 
