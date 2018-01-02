@@ -10,23 +10,19 @@ def get_bar_name_coordinates_and_seats():
     filtered_file = []
     for element in load_data(filepath)['features']:
         coords = element['geometry']['coordinates']
-        bar_name = element['properties']['Attributes']['Name']
+        name = element['properties']['Attributes']['Name']
         seats = element['properties']['Attributes']['SeatsCount']
-        if seats != 0:
-            filtered_file.append([coords, bar_name, seats])
+        if seats > 0:
+            filtered_file.append([coords, name, seats])
     return filtered_file
 
 
 def get_biggest_bar():
-    bar = max(get_bar_name_coordinates_and_seats(), key=lambda el: el[2])
-    bar_name, seats = bar[1], bar[2]
-    return bar_name, seats
+    return tuple(max(get_bar_name_coordinates_and_seats(), key=lambda el: el[2])[1:3])
 
 
 def get_smallest_bar():
-    bar = min(get_bar_name_coordinates_and_seats(), key=lambda el: el[2])
-    bar_name, seats = bar[1], bar[2]
-    return bar_name, seats
+    return tuple(min(get_bar_name_coordinates_and_seats(), key=lambda el: el[2])[1:3])
 
 
 def get_closest_coords(longitude, latitude, element):
@@ -34,8 +30,7 @@ def get_closest_coords(longitude, latitude, element):
 
 
 def get_closest_bar(longitude, latitude):
-    found = min(get_bar_name_coordinates_and_seats(), key=lambda el: get_closest_coords(longitude, latitude, el))
-    return found[1]
+    return min(get_bar_name_coordinates_and_seats(), key=lambda el: get_closest_coords(longitude, latitude, el))[1]
 
 
 filepath = input('Введите путь к файлу (например, c:/path/file.json): ')
