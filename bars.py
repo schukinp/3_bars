@@ -7,8 +7,8 @@ def parser():
     parser.add_argument('--file')
     parser.add_argument('--longitude', type=float)
     parser.add_argument('--latitude', type=float)
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
+
 
 
 def load_data(filepath):
