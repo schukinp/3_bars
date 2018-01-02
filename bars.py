@@ -10,10 +10,10 @@ def get_bar_name_coordinates_and_seats():
     filtered_file = []
     for element in load_data(filepath)['features']:
         coords = element['geometry']['coordinates']
-        name = element['properties']['Attributes']['Name']
+        bar_name = element['properties']['Attributes']['Name']
         seats = element['properties']['Attributes']['SeatsCount']
         if seats > 0:
-            filtered_file.append([coords, name, seats])
+            filtered_file.append([coords, bar_name, seats])
     return filtered_file
 
 
@@ -26,7 +26,8 @@ def get_smallest_bar():
 
 
 def get_closest_coords(longitude, latitude, element):
-    return (longitude - element[0][0]) ** 2 + (latitude - element[0][1]) ** 2
+    distance = (longitude - element[0][0]) ** 2 + (latitude - element[0][1]) ** 2
+    return distance
 
 
 def get_closest_bar(longitude, latitude):
