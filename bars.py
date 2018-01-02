@@ -1,63 +1,51 @@
 import json
 
 
-file = 'bars.json'
-
-
 def load_data(filepath):
-    with open(filepath, 'r', encoding='utf8') as f:
-        return json.load(f)
+    with open(filepath, 'r', encoding='utf8') as file:
+        return json.load(file)
 
 
-data = load_data(file)
-data_length = len(data['features'])
+def get_bar_name_coordinates_and_seats():
+    filtered_file = []
+    for element in load_data(filepath)['features']:
+        coords = element['geometry']['coordinates']
+        bar_name = element['properties']['Attributes']['Name']
+        seats = element['properties']['Attributes']['SeatsCount']
+        if seats != 0:
+            filtered_file.append([coords, bar_name, seats])
+    return filtered_file
 
-
-def get_bar_name_and_seatscount():
-    new_dict = []
-    for index in range(data_length):
-        bar_name = data['features'][index]['properties']['Attributes']['Name']
-        seatscount = data['features'][index]['properties']['Attributes']['SeatsCount']
-        if seatscount != 0: #append to the list only the bars which have at least one seat
-            new_dict.append([bar_name, seatscount])
-    return dict(new_dict)
-
-
-new_data = get_bar_name_and_seatscount()
 
 def get_biggest_bar():
-    max_seats = max(new_data.values())
-    key = list(new_data.keys())[list(new_data.values()).index(max_seats)]
-    print('Самый большой бар: ' + key)
+    bar = max(get_bar_name_coordinates_and_seats(), key=lambda el: el[2])
+    bar_name, seats = bar[1], bar[2]
+    return bar_name, seats
 
 
 def get_smallest_bar():
-    min_seats = min(new_data.values())
-    key = list(new_data.keys())[list(new_data.values()).index(min_seats)]
-    print('Самый маленький бар: ' + key)
+    bar = min(get_bar_name_coordinates_and_seats(), key=lambda el: el[2])
+    bar_name, seats = bar[1], bar[2]
+    return bar_name, seats
 
 
-def get_bar_name_and_coordinates():
-    coords = []
-    for index in range(data_length):
-        bar_name = data['features'][index]['properties']['Attributes']['Name']
-        geometry = data['features'][index]['geometry']['coordinates']
-        coords.append([bar_name, geometry])
-    return dict(coords)
+def get_closest_coords(longitude, latitude, element):
+    return (longitude - element[0][0]) ** 2 + (latitude - element[0][1]) ** 2
 
 
-def get_closest_bar():
-    longitude = float(input('Долгота: '))
-    latitude = float(input('Широта: '))
-    coords = get_bar_name_and_coordinates()
-    def distance(key):
-        dist = (longitude - coords[key][0] + latitude - coords[key][1]) ** 2
-        return dist
-    found = min(coords, key=distance)
-    print('Ближайший бар: ' + found)
+def get_closest_bar(longitude, latitude):
+    found = min(get_bar_name_coordinates_and_seats(), key=lambda el: get_closest_coords(longitude, latitude, el))
+    return found[1]
+
+
+filepath = input('Введите путь к файлу (например, c:/path/file.json): ')
+longitude = float(input('Введите значение долготы: '))
+latitude = float(input('Введите значение ширины: '))
+print('Самый большой бар: %s с количеством мест: %d' % get_biggest_bar())
+print('Cамый маленький бар: %s с количество мест: %d' % get_smallest_bar())
+print('Ближайший бар: \'%s\'' % get_closest_bar(longitude, latitude))
 
 
 if __name__ == '__main__':
-    get_biggest_bar()
-    get_smallest_bar()
-    get_closest_bar()
+    pass
+
