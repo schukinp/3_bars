@@ -2,12 +2,13 @@ import json
 import argparse
 
 
-def parser():
+def get_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file')
     parser.add_argument('--longitude', type=float)
     parser.add_argument('--latitude', type=float)
-    return parser.parse_args()
+    args = parser.parse_args()
+    return args.file, args.longitude, args.latitude
 
 
 
@@ -17,37 +18,54 @@ def load_data(filepath):
 
 
 def get_biggest_bar(bar_list):
-    return max(bar_list,
-               key=lambda bar:
-               bar['properties']['Attributes']['SeatsCount'])
+    return max(
+        bar_list,
+        key=lambda bar:
+        bar
+        ['properties']
+        ['Attributes']
+        ['SeatsCount']
+    )
 
 
 def get_smallest_bar(bar_list):
-    return min(bar_list,
-               key=lambda bar:
-               bar['properties']['Attributes']['SeatsCount'])
+    return min(
+        bar_list,
+        key=lambda bar:
+        bar
+        ['properties']
+        ['Attributes']
+        ['SeatsCount'])
 
 
-def distance(longitude, latitude, bar_list):
-    distance = (longitude - bar_list['geometry']['coordinates'][0]) ** 2 - \
-               (latitude - bar_list['geometry']['coordinates'][1]) ** 2
+def get_distance(longitude, latitude, bar):
+    distance = ((longitude - bar['geometry']['coordinates'][0]) ** 2 -
+                (latitude - bar['geometry']['coordinates'][1]) ** 2)
     return distance
 
 
 def get_closest_bar(bar_list):
-    return min(bar_list,
-               key=lambda bar:
-               distance(longitude, latitude, bar))
+    return min(
+        bar_list,
+        key=lambda bar:
+        get_distance(longitude, latitude, bar))
 
 
 if __name__ == '__main__':
-    filepath = parser().file
+    filepath, longitude, latitude = get_arguments()
     bar_list = load_data(filepath)['features']
-    longitude = parser().longitude
-    latitude = parser().latitude
     print('Самый большой бар: {}'.
-          format(get_biggest_bar(bar_list)['properties']['Attributes']['Name']))
+          format(get_biggest_bar(bar_list)
+                           ['properties']
+                           ['Attributes']
+                           ['Name']))
     print('Cамый маленький бар: {}'.
-          format(get_smallest_bar(bar_list)['properties']['Attributes']['Name']))
+          format(get_smallest_bar(bar_list)
+                           ['properties']
+                           ['Attributes']
+                           ['Name']))
     print('Ближайший бар: {}'.
-          format(get_closest_bar(bar_list)['properties']['Attributes']['Name']))
+          format(get_closest_bar(bar_list)
+                           ['properties']
+                           ['Attributes']
+                           ['Name']))
