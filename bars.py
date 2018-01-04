@@ -5,8 +5,6 @@ import argparse
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file')
-    parser.add_argument('--longitude', type=float)
-    parser.add_argument('--latitude', type=float)
     return parser.parse_args()
 
 
@@ -23,8 +21,9 @@ def get_biggest_bar(bar_list):
 
 
 def get_smallest_bar(bar_list):
-    return min(bar_list,
-               key=lambda bar: bar['properties']['Attributes']['SeatsCount']
+    return min(
+        bar_list,
+        key=lambda bar: bar['properties']['Attributes']['SeatsCount']
     )
 
 
@@ -40,12 +39,15 @@ def get_closest_bar(bar_list):
 
 if __name__ == '__main__':
     args = create_parser()
-    bar_list = load_data(args.file)['features']
-    longitude = args.longitude
-    latitude = args.latitude
-    print('Самый большой бар: {}'.
-          format(get_biggest_bar(bar_list)['properties']['Attributes']['Name']))
-    print('Cамый маленький бар: {}'.
-          format(get_smallest_bar(bar_list)['properties']['Attributes']['Name']))
-    print('Ближайший бар: {}'.
-          format(get_closest_bar(bar_list)['properties']['Attributes']['Name']))
+    try:
+        bar_list = load_data(args.file)['features']
+        print('Самый большой бар: {}'.
+            format(get_biggest_bar(bar_list)['properties']['Attributes']['Name']))
+        print('Cамый маленький бар: {}'.
+            format(get_smallest_bar(bar_list)['properties']['Attributes']['Name']))
+        longitude = float(input('Введите долготу: '))
+        latitude = float(input('Введите широту: '))
+        print('Ближайший бар: {}'.
+            format(get_closest_bar(bar_list)['properties']['Attributes']['Name']))
+    except (FileNotFoundError, ValueError):
+        print('Невозможно прочесть файл')
